@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb';
-import { Database, Listings } from '../lib/types';
+import { Database, Listings } from '../../../lib/types';
 
-export const resolvers = {
+export const listingResolvers = {
   Query: {
     listings: async (
       _root: undefined,
