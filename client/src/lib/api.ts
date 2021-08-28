@@ -2,6 +2,9 @@ interface Query<TVariable> {
   query: string;
   variables?: TVariable;
 }
+interface Error {
+  message: string;
+}
 
 const fetchData = async <T = any, TVariable = any>(query: Query<TVariable>) => {
   const response = await fetch('/graphql', {
@@ -12,7 +15,11 @@ const fetchData = async <T = any, TVariable = any>(query: Query<TVariable>) => {
     body: JSON.stringify(query)
   });
 
-  return response.json() as Promise<T>;
+  if (!response.ok) {
+    throw new Error('Failed to fetch from the server');
+  }
+
+  return response.json() as Promise<{ data: T; errors: Error[] }>;
 };
 
 export default fetchData;

@@ -1,9 +1,8 @@
-import React from 'react';
-import fetchData from '../../lib/api';
-import { DeleteListing, DeleteVariable, ListingsData } from './types';
+import useMutaion from '../../lib/useMutation';
+import useQuery from '../../lib/useQuery';
+import { Listing, ListingsData } from './types';
 
-const Listings = () => {
-  const GET_LISTINGS = `
+const GET_LISTINGS = `
         query GetListings{
             listings {
                 id
@@ -14,7 +13,7 @@ const Listings = () => {
 
     `;
 
-  const DELETE_LISTING = `
+const DELETE_LISTING = `
         mutation DeleteListing($id: ID!) {
            listing :deleteListing(id: $id){
                 id
@@ -24,27 +23,56 @@ const Listings = () => {
         }
     `;
 
-  const handleClick = async () => {
-    const {
-      data: { listings }
-    } = await fetchData<ListingsData>({ query: GET_LISTINGS });
-    console.log(listings);
-  };
+interface DeleteVariable {
+  id: string;
+}
+const Listings = () => {
+  const {
+    data,
+    loading,
+    error,
+    fetch: refetch
+  } = useQuery<ListingsData>(GET_LISTINGS);
 
-  const deleteListing = async () => {
-    const {
-      data: { listing }
-    } = await fetchData<DeleteListing, DeleteVariable>({
-      query: DELETE_LISTING,
-      variables: { id: '612587bd18b46d700e924a1c' }
-    });
-    console.log(listing);
+  const [mutation, fetchMutation] = useMutaion<Listing, DeleteVariable>(
+    DELETE_LISTING
+  );
+
+  const deleteListing = async (id: string) => {
+    await fetchMutation({ id });
+    refetch();
   };
+  if (loading) {
+    return <h2>Loading..</h2>;
+  }
+
+  if (error) {
+    return <h2>Something went Wrong</h2>;
+  }
+
+  const deleteListingProgress = mutation.mutationLoading ? (
+    <h6>Deleting</h6>
+  ) : null;
+  const deleteListingError = mutation.mutationError ? (
+    <h6>Something went wrong! Try again later</h6>
+  ) : null;
+  const renderListings = data
+    ? data.listings.map((listing) => {
+        return (
+          <ul key={listing.id}>
+            <li>{listing.title}</li>
+            <li>{listing.address}</li>
+            <button onClick={() => deleteListing(listing.id)}>Delete</button>
+          </ul>
+        );
+      })
+    : null;
 
   return (
     <div>
-      <button onClick={handleClick}>Fetch data</button>
-      <button onClick={deleteListing}>Delete</button>
+      {renderListings}
+      {deleteListingProgress}
+      {deleteListingError}
     </div>
   );
 };
