@@ -1,45 +1,40 @@
-import useMutaion from '../../lib/useMutation';
-import useQuery from '../../lib/useQuery';
+import { useQuery, useMutation, gql } from '@apollo/client';
+
 import { Listing, ListingsData } from './types';
 
-const GET_LISTINGS = `
-        query GetListings{
-            listings {
-                id
-                title
-                address
-            }
-        }    
+const GET_LISTINGS = gql`
+  query GetListings {
+    listings {
+      id
+      title
+      address
+    }
+  }
+`;
 
-    `;
-
-const DELETE_LISTING = `
-        mutation DeleteListing($id: ID!) {
-           listing :deleteListing(id: $id){
-                id
-                title
-                address
-            }
-        }
-    `;
+const DELETE_LISTING = gql`
+  mutation DeleteListing($id: ID!) {
+    listing: deleteListing(id: $id) {
+      id
+      title
+      address
+    }
+  }
+`;
 
 interface DeleteVariable {
   id: string;
 }
-const Listings = () => {
-  const {
-    data,
-    loading,
-    error,
-    fetch: refetch
-  } = useQuery<ListingsData>(GET_LISTINGS);
 
-  const [mutation, fetchMutation] = useMutaion<Listing, DeleteVariable>(
-    DELETE_LISTING
-  );
+const Listings = () => {
+  const { data, loading, error, refetch } =
+    useQuery<ListingsData>(GET_LISTINGS);
+
+  const [deleteMutation, { error: deleteError, loading: deleteLoading }] =
+    useMutation<Listing, DeleteVariable>(DELETE_LISTING);
 
   const deleteListing = async (id: string) => {
-    await fetchMutation({ id });
+    await deleteMutation({ variables: { id } });
     refetch();
   };
   if (loading) {
@@ -50,10 +45,8 @@ const Listings = () => {
     return <h2>Something went Wrong</h2>;
   }
 
-  const deleteListingProgress = mutation.mutationLoading ? (
-    <h6>Deleting</h6>
-  ) : null;
-  const deleteListingError = mutation.mutationError ? (
+  const deleteListingProgress = deleteLoading ? <h6>Deleting</h6> : null;
+  const deleteListingError = deleteError ? (
     <h6>Something went wrong! Try again later</h6>
   ) : null;
   const renderListings = data
