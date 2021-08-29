@@ -1,10 +1,12 @@
+import { Container } from '@material-ui/core';
+
 import Listings from './Listings/Listings';
 
 function App() {
   return (
-    <div>
+    <Container>
       <Listings />
-    </div>
+    </Container>
   );
 }
 
