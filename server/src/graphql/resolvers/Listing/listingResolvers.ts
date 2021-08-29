@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { Database, Listings } from '../../../lib/types';
+import { Database, Listing } from '../../../lib/types';
 
 export const listingResolvers = {
   Query: {
@@ -7,7 +7,7 @@ export const listingResolvers = {
       _root: undefined,
       _args: Record<string, never>,
       { db }: { db: Database }
-    ): Promise<Listings[]> => {
+    ): Promise<Listing[]> => {
       return await db.listings.find({}).toArray();
     }
   },
@@ -16,7 +16,7 @@ export const listingResolvers = {
       _root: undefined,
       { id }: { id: string },
       { db }: { db: Database }
-    ): Promise<Listings> => {
+    ): Promise<Listing> => {
       const deleteResult = await db.listings.findOneAndDelete({
         _id: new ObjectId(id)
       });
@@ -28,6 +28,6 @@ export const listingResolvers = {
     }
   },
   Listing: {
-    id: (root: Listings) => root._id.toString()
+    id: (root: Listing) => root._id.toString()
   }
 };
