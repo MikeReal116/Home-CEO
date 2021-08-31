@@ -9,7 +9,9 @@ const dbConnection = async (): Promise<Database> => {
   const db = client.db('main');
 
   return {
-    listings: db.collection('test_listing')
+    listings: db.collection('listings'),
+    users: db.collection('users'),
+    bookings: db.collection('bookings')
   };
 };
 

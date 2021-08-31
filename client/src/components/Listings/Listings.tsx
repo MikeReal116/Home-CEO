@@ -1,79 +1,121 @@
-import useMutaion from '../../lib/useMutation';
-import useQuery from '../../lib/useQuery';
-import { Listing, ListingsData } from './types';
+import { useQuery, useMutation, gql } from '@apollo/client';
+import {
+  Grid,
+  Typography,
+  CircularProgress,
+  List,
+  ListItem,
+  Avatar,
+  ListItemAvatar,
+  ListItemText,
+  Button
+} from '@material-ui/core';
+import { useStyles } from './styles';
 
-const GET_LISTINGS = `
-        query GetListings{
-            listings {
-                id
-                title
-                address
-            }
-        }    
+import {
+  DeleteListing,
+  DeleteListingVariables
+} from './__generated__/DeleteListing';
 
-    `;
+import { GetListings as ListingsData } from './__generated__/GetListings';
 
-const DELETE_LISTING = `
-        mutation DeleteListing($id: ID!) {
-           listing :deleteListing(id: $id){
-                id
-                title
-                address
-            }
-        }
-    `;
+const GET_LISTINGS = gql`
+  query GetListings {
+    listings {
+      id
+      title
+      image
+      address
+      price
+      numOfBeds
+      numOfGuests
+      numOfBaths
+      rating
+    }
+  }
+`;
 
-interface DeleteVariable {
-  id: string;
-}
+const DELETE_LISTING = gql`
+  mutation DeleteListing($id: ID!) {
+    listing: deleteListing(id: $id) {
+      id
+    }
+  }
+`;
+
 const Listings = () => {
-  const {
-    data,
-    loading,
-    error,
-    fetch: refetch
-  } = useQuery<ListingsData>(GET_LISTINGS);
+  const classes = useStyles();
+  const { data, loading, error, refetch } =
+    useQuery<ListingsData>(GET_LISTINGS);
 
-  const [mutation, fetchMutation] = useMutaion<Listing, DeleteVariable>(
-    DELETE_LISTING
-  );
+  const [deleteMutation, { error: deleteError }] = useMutation<
+    DeleteListing,
+    DeleteListingVariables
+  >(DELETE_LISTING);
 
   const deleteListing = async (id: string) => {
-    await fetchMutation({ id });
+    await deleteMutation({ variables: { id } });
     refetch();
   };
+
   if (loading) {
-    return <h2>Loading..</h2>;
+    return <CircularProgress />;
   }
 
   if (error) {
-    return <h2>Something went Wrong</h2>;
+    return <Typography color='secondary'>Something went Wrong</Typography>;
   }
 
-  const deleteListingProgress = mutation.mutationLoading ? (
-    <h6>Deleting</h6>
+  const deleteListingError = deleteError ? (
+    <Typography color='secondary'>
+      Something went wrong! Try again later
+    </Typography>
   ) : null;
-  const deleteListingError = mutation.mutationError ? (
-    <h6>Something went wrong! Try again later</h6>
-  ) : null;
+
   const renderListings = data
     ? data.listings.map((listing) => {
         return (
-          <ul key={listing.id}>
-            <li>{listing.title}</li>
-            <li>{listing.address}</li>
-            <button onClick={() => deleteListing(listing.id)}>Delete</button>
-          </ul>
+          <Grid item xs={12} key={listing.id}>
+            <List className={classes.list}>
+              <ListItem alignItems='flex-start'>
+                <ListItemAvatar>
+                  <Avatar
+                    alt={listing.title}
+                    src={listing.image}
+                    variant='square'
+                  />
+                </ListItemAvatar>
+                <ListItemText
+                  primary={listing.title}
+                  secondary={listing.address}
+                />
+              </ListItem>
+              <span>
+                <Button
+                  onClick={() => deleteListing(listing.id)}
+                  variant='outlined'
+                  size='small'
+                  color='primary'
+                >
+                  Delete
+                </Button>
+              </span>
+            </List>
+          </Grid>
         );
       })
     : null;
 
   return (
-    <div>
+    <Grid container spacing={3}>
+      <Grid item xs={12}>
+        <Typography variant='h5' paragraph>
+          Home-CEO Listings
+        </Typography>
+      </Grid>
       {renderListings}
-      {deleteListingProgress}
       {deleteListingError}
-    </div>
+    </Grid>
   );
 };
 

@@ -8,8 +8,8 @@ interface State<T> {
 }
 
 type ReturnTuple<T, TVariable> = [
-  State<T>,
-  (variables?: TVariable) => Promise<void>
+  (variables?: TVariable) => Promise<void>,
+  State<T>
 ];
 
 const useMutaion = <T = any, TVariable = any>(
@@ -50,7 +50,7 @@ const useMutaion = <T = any, TVariable = any>(
     }
   };
 
-  return [state, fetch];
+  return [fetch, state];
 };
 
 export default useMutaion;
