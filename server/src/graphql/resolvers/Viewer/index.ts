@@ -51,6 +51,7 @@ const googleLogin = async (
         listings: []
       });
       const viewerID = InsertResult.insertedId;
+
       viewer = await db.users.findOne({ _id: viewerID });
     }
     return viewer;
