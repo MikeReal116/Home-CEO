@@ -16,15 +16,15 @@ export const Google = {
   }),
   login: async (code: string) => {
     const { tokens } = await oauth2Client.getToken(code);
+
     oauth2Client.setCredentials(tokens);
 
     const { data } = await google
       .people({ version: 'v1', auth: oauth2Client })
       .people.get({
         resourceName: 'people/me',
-        personFields: 'emailAddresses, names, photos'
+        personFields: 'names,emailAddresses,photos'
       });
-
     return { user: data };
   }
 };
