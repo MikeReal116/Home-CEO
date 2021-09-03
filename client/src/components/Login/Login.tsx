@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useHistory } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { useApolloClient, useMutation } from '@apollo/client';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
@@ -19,34 +19,30 @@ import {
   LogInVariables
 } from '../../lib/graphql/mutations/LogIn/__generated__/LogIn';
 import { errorNotification } from '../../lib/notifications/error';
-import { successNotification } from '../../lib/notifications/success';
 
-interface Prop {
+interface Props {
   setViewer: React.Dispatch<React.SetStateAction<Viewer>>;
 }
 
-const Login = ({ setViewer }: Prop) => {
+const Login = ({ setViewer }: Props) => {
   const client = useApolloClient();
   const classes = useStyles();
-  const history = useHistory();
   const [
     logInFn,
     { data: logInData, loading: logInLoading, error: logInError }
   ] = useMutation<LogInData, LogInVariables>(LOGIN, {
     onCompleted: (data) => {
-      setViewer(data.logIn);
+      if (data && data.logIn) {
+        setViewer(data.logIn);
+
+        if (data.logIn.token) {
+          sessionStorage.setItem('token', data.logIn.token);
+        } else {
+          sessionStorage.removeItem('token');
+        }
+      }
     }
   });
-
-  const handleLoginClick = async () => {
-    try {
-      const { data } = await client.query<AuthUrlData>({
-        query: GET_AUTH_URL
-      });
-
-      window.location.href = data.authUrl;
-    } catch (error) {}
-  };
 
   const logInRef = useRef(logInFn);
 
@@ -58,13 +54,25 @@ const Login = ({ setViewer }: Prop) => {
     }
   }, []);
 
+  const handleLoginClick = async () => {
+    try {
+      const { data } = await client.query<AuthUrlData>({
+        query: GET_AUTH_URL
+      });
+
+      window.location.href = data.authUrl;
+    } catch (error) {
+      errorNotification('Login failed, try again');
+    }
+  };
+
   if (logInLoading) {
     return <CircularProgress />;
   }
 
   if (logInData && logInData.logIn) {
     const { id } = logInData.logIn;
-    history.push(`/user/${id}`);
+    return <Redirect to={`/user/${id}`} />;
   }
   if (logInError) {
     errorNotification('Login failed, try again');

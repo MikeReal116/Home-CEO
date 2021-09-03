@@ -1,5 +1,6 @@
-import express, { Application } from 'express';
+import express, { Application, Request, Response } from 'express';
 import { ApolloServer } from 'apollo-server-express';
+import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -9,12 +10,15 @@ import dbConnection from './database';
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser(process.env.COOKIE_SECRET));
 
 const startServer = async (app: Application) => {
   const db = await dbConnection();
 
-  const context = () => ({
-    db
+  const context = ({ req, res }: { req: Request; res: Response }) => ({
+    db,
+    req,
+    res
   });
 
   const server = new ApolloServer({ typeDefs, resolvers, context });
