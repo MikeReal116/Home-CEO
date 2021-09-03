@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useMutation } from '@apollo/client';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import { Container } from '@material-ui/core';
+import { CircularProgress, Container } from '@material-ui/core';
 
 import Listings from './Listings/Listings';
 import Home from './Home/Home';
@@ -10,6 +11,12 @@ import NotFound from './NotFound/NotFound';
 import User from './User/User';
 import Login from './Login/Login';
 import { Viewer } from '../lib/types';
+import Header from './Header/Header';
+import { LOGIN } from '../lib/graphql';
+import {
+  LogInVariables,
+  LogIn as LogInData
+} from '../lib/graphql/mutations/LogIn/__generated__/LogIn';
 
 function App() {
   const [viewer, setViewer] = useState<Viewer>({
@@ -19,10 +26,38 @@ function App() {
     hasWallet: null,
     didRequest: false
   });
+  const [loginFn, { error }] = useMutation<LogInData, LogInVariables>(LOGIN, {
+    onCompleted: (data) => {
+      if (data && data.logIn) {
+        setViewer(data.logIn);
+
+        if (data.logIn.token) {
+          sessionStorage.setItem('token', data.logIn.token);
+        } else {
+          sessionStorage.removeItem('token');
+        }
+      }
+    }
+  });
+
+  const logInRef = useRef(loginFn);
+
+  useEffect(() => {
+    logInRef.current();
+  }, []);
+
+  if (!error && !viewer.didRequest) {
+    return (
+      <Container maxWidth='sm'>
+        <CircularProgress />
+      </Container>
+    );
+  }
 
   return (
     <BrowserRouter>
-      <Container>
+      <Container maxWidth='xl'>
+        <Header viewer={viewer} setViewer={setViewer} />
         <Switch>
           <Route exact path='/' component={Home} />
           <Route exact path='/host' component={Host} />
