@@ -49,6 +49,7 @@ export interface User {
   walletId?: string;
   bookings: ObjectId[];
   listings: ObjectId[];
+  authorized?: boolean;
 }
 export interface Booking {
   _id: ObjectId;

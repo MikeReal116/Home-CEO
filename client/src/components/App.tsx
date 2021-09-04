@@ -63,7 +63,7 @@ function App() {
           <Route exact path='/host' component={Host} />
           <Route exact path='/listing/:id' component={Listing} />
           <Route exact path='/listings/:location?' component={Listings} />
-          <Route exact path='/user' component={User} />
+          <Route exact path='/user/:id' component={User} />
           <Route
             exact
             path='/login'
