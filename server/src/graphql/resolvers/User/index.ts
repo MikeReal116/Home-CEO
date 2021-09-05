@@ -49,9 +49,9 @@ export const userResolver: IResolvers = {
         };
 
         let cursor = await db.bookings.find({ _id: { $in: user.bookings } });
-        cursor = cursor.skip(page < 0 ? (page - 1) * limit : 0).limit(limit);
-
         bookingData.total = await cursor.count();
+
+        cursor = cursor.skip(page < 0 ? (page - 1) * limit : 0).limit(limit);
         bookingData.result = await cursor.toArray();
 
         return bookingData;
@@ -70,10 +70,10 @@ export const userResolver: IResolvers = {
           result: []
         };
 
-        let cursor = await db.listings.find({ _id: { $in: user.bookings } });
-        cursor = cursor.skip(page > 0 ? (page - 1) * limit : 0).limit(limit);
-
+        let cursor = await db.listings.find({ _id: { $in: user.listings } });
         listingData.total = await cursor.count();
+
+        cursor = cursor.skip(page > 0 ? (page - 1) * limit : 0).limit(limit);
         listingData.result = await cursor.toArray();
 
         return listingData;
