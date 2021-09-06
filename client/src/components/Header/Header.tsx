@@ -41,7 +41,7 @@ const Header = ({ viewer, setViewer }: Props) => {
 
   const handleClickProfile = () => {
     handleClose();
-    history.push(`/user/{viewer.id}`);
+    history.push(`/user/${viewer.id}`);
   };
   const handleClickLogout = () => {
     handleClose();
@@ -80,7 +80,7 @@ const Header = ({ viewer, setViewer }: Props) => {
 
   return (
     <>
-      <AppBar position='fixed' color='transparent'>
+      <AppBar position='fixed' color='inherit'>
         <Toolbar className={classes.toolbar}>
           <IconButton className={classes.logo} component={Link} to='/'>
             <HomeIcon fontSize='large' />
