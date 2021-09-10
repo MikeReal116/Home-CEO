@@ -18,7 +18,6 @@ interface Props {
 
 const ListingDetail = ({ listing }: Props) => {
   const classes = useStyles();
-  console.log(listing);
 
   return (
     <Grid container spacing={3}>

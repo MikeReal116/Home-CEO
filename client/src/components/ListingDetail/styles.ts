@@ -2,7 +2,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 export const useStyles = makeStyles((theme: Theme) => ({
   media: {
-    height: 600
+    height: 500
   },
   location: {
     display: 'flex',
