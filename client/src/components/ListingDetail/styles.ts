@@ -29,5 +29,15 @@ export const useStyles = makeStyles((theme: Theme) => ({
   },
   chip: {
     marginRight: theme.spacing(2)
+  },
+  userName: {
+    '&:link ': {
+      color: 'rgba(0, 0, 0, 0.87)',
+      textDecoration: 'none'
+    },
+    '&:visited ': {
+      color: 'rgba(0, 0, 0, 0.87)',
+      textDecoration: 'none'
+    }
   }
 }));

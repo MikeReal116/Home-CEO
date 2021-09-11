@@ -4,7 +4,14 @@ import { ObjectId } from 'mongodb';
 
 import { Database, Listing, User } from '../../../lib/types';
 import { authorize } from '../../../lib/utils/authorize';
-import { ListingArgs, Paginate, ReturnBooking } from './types';
+import {
+  ListingArgs,
+  ListingFilter,
+  ListingsArgs,
+  ListingsData,
+  Paginate,
+  ReturnBooking
+} from './types';
 
 export const listingResolver: IResolvers = {
   Query: {
@@ -28,6 +35,35 @@ export const listingResolver: IResolvers = {
         return listing;
       } catch (error) {
         throw new Error(`Could not query for listing: ${error}`);
+      }
+    },
+    listings: async (
+      _root: undefined,
+      { filter, limit, page }: ListingsArgs,
+      { db }: { db: Database }
+    ): Promise<ListingsData | undefined> => {
+      try {
+        const listingsData: ListingsData = {
+          result: [],
+          total: 0
+        };
+        let cursor = db.listings.find({});
+
+        listingsData.total = await cursor.count();
+
+        if (filter === ListingFilter.PRICE_HIGH_TO_LOW) {
+          cursor = cursor.sort({ price: -1 });
+        }
+        if (filter === ListingFilter.PRICE_LOW_TO_HIGH) {
+          cursor = cursor.sort({ price: 1 });
+        }
+
+        cursor = cursor.skip(page > 0 ? (page - 1) * limit : 0).limit(limit);
+        listingsData.result = await cursor.toArray();
+
+        return listingsData;
+      } catch (error) {
+        throw new Error(`Could not query for listings: ${error}`);
       }
     }
   },
@@ -57,7 +93,7 @@ export const listingResolver: IResolvers = {
       { db }: { db: Database }
     ): Promise<ReturnBooking | undefined> => {
       try {
-        const bookingReturn = {
+        const bookingReturn: ReturnBooking = {
           total: 0,
           result: []
         };

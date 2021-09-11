@@ -1,6 +1,5 @@
 import { Typography } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
-import { useHistory } from 'react-router-dom';
 
 import { GetUser_user_listings as ListingData } from '../../lib/graphql/queries/User/__generated__/GetUser';
 import ListCard from '../Card/ListCard';
@@ -20,12 +19,7 @@ const UserListing = ({
   setListingPage,
   limit
 }: Props) => {
-  const history = useHistory();
   const classes = useStyles();
-
-  const handleCardClick = (id: string) => {
-    history.push(`/listing/${id}`);
-  };
 
   const renderListing =
     listings.total === 0 ? (
@@ -59,7 +53,6 @@ const UserListing = ({
               md={4}
               lg={3}
               className={classes.card}
-              onClick={() => handleCardClick(listing.id)}
             >
               <ListCard
                 price={listing.price}

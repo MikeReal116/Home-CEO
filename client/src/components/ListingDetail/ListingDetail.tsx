@@ -8,6 +8,7 @@ import {
 } from '@material-ui/core';
 import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
 import Chip from '@material-ui/core/Chip';
+import { Link } from 'react-router-dom';
 
 import { GetListing_listing } from '../../lib/graphql/queries/Listing/__generated__/GetListing';
 import { useStyles } from './styles';
@@ -45,8 +46,17 @@ const ListingDetail = ({ listing }: Props) => {
         </Typography>
       </Grid>
       <Grid item xs={12} className={classes.host}>
-        <Avatar src={listing.host.avatar} className={classes.avatar} />
-        <Typography>
+        <Avatar
+          src={listing.host.avatar}
+          className={classes.avatar}
+          component={Link}
+          to={`/user/${listing.host.id}`}
+        />
+        <Typography
+          component={Link}
+          to={`/user/${listing.host.id}`}
+          className={classes.userName}
+        >
           <Box fontFamily='Monospace' fontSize='h4.fontSize' fontStyle='italic'>
             {listing.host.name}
           </Box>

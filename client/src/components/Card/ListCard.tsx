@@ -1,3 +1,4 @@
+import { useHistory } from 'react-router-dom';
 import Card from '@material-ui/core/Card';
 import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
@@ -18,9 +19,14 @@ interface Props {
 
 const ListCard = ({ id, price, image, numOfGuests, title }: Props) => {
   const classes = useStyles();
+  const history = useHistory();
+
+  const handleCardClick = () => {
+    history.push(`/listing/${id}`);
+  };
 
   return (
-    <Card className={classes.root}>
+    <Card className={classes.root} onClick={handleCardClick}>
       <CardMedia className={classes.media} image={image} title={title} />
       <CardContent className={classes.cardContent}>
         <Typography paragraph>
