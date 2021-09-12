@@ -1,9 +1,14 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
 export const useStyles = makeStyles((theme: Theme) => ({
-  list: {
+  root: {
+    padding: theme.spacing(10)
+  },
+  filterPage: {
     display: 'flex',
+    alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: theme.palette.background.paper
+    marginBottom: theme.spacing(3),
+    marginTop: theme.spacing(3)
   }
 }));

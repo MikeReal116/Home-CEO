@@ -9,11 +9,11 @@ import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
 import IconButton from '@material-ui/core/IconButton';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
+import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
 
 import { useStyles } from './styles';
 import { Viewer } from '../../lib/types';
-import { Button } from '@material-ui/core';
 import { LOGOUT } from '../../lib/graphql';
 import { LogOut } from '../../lib/graphql/mutations/LogOut/__generated__/LogOut';
 import { errorNotification } from '../../lib/notifications/error';
@@ -26,8 +26,10 @@ interface Props {
 const Header = ({ viewer, setViewer }: Props) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const history = useHistory();
+
   const open = Boolean(anchorEl);
   const classes = useStyles();
+
   const [logOutFn, { error: logoutError }] = useMutation<LogOut>(LOGOUT, {
     onCompleted: (data) => {
       setViewer(data.logOut);
@@ -43,10 +45,12 @@ const Header = ({ viewer, setViewer }: Props) => {
     handleClose();
     history.push(`/user/${viewer.id}`);
   };
+
   const handleClickLogout = () => {
     handleClose();
     logOutFn();
   };
+
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -82,9 +86,10 @@ const Header = ({ viewer, setViewer }: Props) => {
     <>
       <AppBar position='fixed' color='inherit'>
         <Toolbar className={classes.toolbar}>
-          <IconButton className={classes.logo} component={Link} to='/'>
+          <IconButton component={Link} to='/'>
             <HomeIcon fontSize='large' />
           </IconButton>
+
           <div className={classes.right}>
             <div className={classes.host}>
               <HomeOutlinedIcon />

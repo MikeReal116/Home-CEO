@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@apollo/client';
+import { useHistory } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
@@ -32,6 +33,7 @@ const LIMIT = 4;
 const PAGE = 1;
 const Home = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const history = useHistory();
   const classes = useStyles();
   const { data: ListingsData, loading } = useQuery<
     ListingsData,
@@ -48,6 +50,10 @@ const Home = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setSearchTerm(e.target.value.trim());
+  };
+
+  const handleSearchClick = () => {
+    history.push(`/listings/${searchTerm}`);
   };
 
   const disabled = searchTerm ? false : true;
@@ -68,24 +74,23 @@ const Home = () => {
               <strong>Premium listings</strong>
             </Typography>
           </Grid>
-          {ListingsData.listings.result.map((listing) => (
-            <Grid item xs={12} md={3} key={listing.id}>
-              <ListCard
-                id={listing.id}
-                price={listing.price}
-                image={listing.image}
-                title={listing.title}
-                numOfGuests={listing.numOfGuests}
-              />
-            </Grid>
-          ))}
+          {ListingsData.listings &&
+            ListingsData.listings.result.map((listing) => (
+              <Grid item xs={12} md={3} key={listing.id}>
+                <ListCard
+                  id={listing.id}
+                  price={listing.price}
+                  image={listing.image}
+                  title={listing.title}
+                  numOfGuests={listing.numOfGuests}
+                />
+              </Grid>
+            ))}
         </Grid>
       );
     }
     return null;
   };
-
-  console.log(ListingsData);
 
   return (
     <Container
@@ -108,6 +113,7 @@ const Home = () => {
           className={classes.iconButton}
           aria-label='search'
           disabled={disabled}
+          onClick={handleSearchClick}
         >
           <SearchIcon />
         </IconButton>

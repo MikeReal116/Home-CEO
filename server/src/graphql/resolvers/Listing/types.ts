@@ -23,9 +23,11 @@ export interface ListingsArgs {
   filter: ListingFilter;
   limit: number;
   page: number;
+  location?: string;
 }
 
 export interface ListingsData {
+  search: string | null;
   total: number;
   result: Listing[];
 }
