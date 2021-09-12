@@ -21,15 +21,17 @@ export interface Listing_listings_result {
 
 export interface Listing_listings {
   __typename: "Listings";
+  search: string | null;
   total: number;
   result: Listing_listings_result[];
 }
 
 export interface Listing {
-  listings: Listing_listings;
+  listings: Listing_listings | null;
 }
 
 export interface ListingVariables {
+  location?: string | null;
   filter: ListingFilter;
   limit: number;
   page: number;

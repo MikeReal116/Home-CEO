@@ -39,17 +39,34 @@ export const listingResolver: IResolvers = {
     },
     listings: async (
       _root: undefined,
-      { filter, limit, page }: ListingsArgs,
+      { filter, limit, page, location }: ListingsArgs,
       { db }: { db: Database }
     ): Promise<ListingsData | undefined> => {
       try {
         const listingsData: ListingsData = {
           result: [],
+          search: null,
           total: 0
         };
-        let cursor = db.listings.find({});
+
+        let query = {};
+
+        if (location) {
+          query = {
+            $or: [
+              { country: { $regex: location, $options: 'i' } },
+              { city: { $regex: location, $options: 'i' } },
+              { admin: { $regex: location, $options: 'i' } }
+            ]
+          };
+        }
+
+        let cursor = await db.listings.find(query);
 
         listingsData.total = await cursor.count();
+        if (location && listingsData.total > 0) {
+          listingsData.search = `Results for '${location}'`;
+        }
 
         if (filter === ListingFilter.PRICE_HIGH_TO_LOW) {
           cursor = cursor.sort({ price: -1 });

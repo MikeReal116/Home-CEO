@@ -517,6 +517,18 @@
         "specifiedByUrl": null,
         "fields": [
           {
+            "name": "search",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "total",
             "description": null,
             "args": [],
@@ -917,6 +929,18 @@
             "description": null,
             "args": [
               {
+                "name": "location",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
                 "name": "filter",
                 "description": null,
                 "type": {
@@ -966,13 +990,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Listings",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "Listings",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
