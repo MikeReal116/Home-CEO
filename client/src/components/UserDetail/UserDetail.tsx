@@ -41,13 +41,11 @@ const UserDetail = ({ user, isViewerSameUser }: Props) => {
           <>
             <Grid item xs={12}>
               <Typography variant='h6' color='primary'>
-                {' '}
-                Additional Details{' '}
+                Additional Details
               </Typography>
             </Grid>
             <Grid item xs={12}>
               <Typography>
-                {' '}
                 Do you want to host people in your lovely apartment? Connect
                 with your Stripe account. We use stripe to take and transfer
                 your earnings in a secured way

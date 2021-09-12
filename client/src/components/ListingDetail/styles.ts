@@ -2,7 +2,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 export const useStyles = makeStyles((theme: Theme) => ({
   media: {
-    height: 600
+    height: 500
   },
   location: {
     display: 'flex',
@@ -29,5 +29,15 @@ export const useStyles = makeStyles((theme: Theme) => ({
   },
   chip: {
     marginRight: theme.spacing(2)
+  },
+  userName: {
+    '&:link ': {
+      color: 'rgba(0, 0, 0, 0.87)',
+      textDecoration: 'none'
+    },
+    '&:visited ': {
+      color: 'rgba(0, 0, 0, 0.87)',
+      textDecoration: 'none'
+    }
   }
 }));

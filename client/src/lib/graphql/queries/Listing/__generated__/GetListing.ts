@@ -3,14 +3,14 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { ListingType } from './../../../globalTypes';
+import { ListingType } from "./../../../globalTypes";
 
 // ====================================================
 // GraphQL query operation: GetListing
 // ====================================================
 
 export interface GetListing_listing_host {
-  __typename: 'User';
+  __typename: "User";
   id: string;
   avatar: string;
   name: string;
@@ -18,20 +18,20 @@ export interface GetListing_listing_host {
 }
 
 export interface GetListing_listing_bookings_result {
-  __typename: 'Booking';
+  __typename: "Booking";
   id: string;
   checkIn: string;
   checkOut: string;
 }
 
 export interface GetListing_listing_bookings {
-  __typename: 'Bookings';
+  __typename: "Bookings";
   total: number;
   result: GetListing_listing_bookings_result[];
 }
 
 export interface GetListing_listing {
-  __typename: 'Listing';
+  __typename: "Listing";
   id: string;
   title: string;
   description: string;
