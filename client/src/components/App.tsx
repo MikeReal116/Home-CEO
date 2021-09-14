@@ -55,7 +55,6 @@ function App() {
     );
   }
 
-  console.log(process.env.REACT_APP_STRIPE_CLIENT_ID);
   return (
     <BrowserRouter>
       <Container maxWidth='xl'>
