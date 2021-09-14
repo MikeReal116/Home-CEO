@@ -31,3 +31,9 @@ export interface ListingsData {
   total: number;
   result: Listing[];
 }
+
+export interface LisitingsQuery {
+  city?: string | null;
+  admin?: string | null;
+  country?: string | null;
+}
