@@ -4,6 +4,9 @@ export const typeDefs = gql`
   input LogInInput {
     code: String!
   }
+  input StripeInput {
+    code: String!
+  }
 
   enum ListingType {
     APARTMENT
@@ -83,5 +86,7 @@ export const typeDefs = gql`
   type Mutation {
     logIn(input: LogInInput): Viewer!
     logOut: Viewer!
+    stripeConnect(input: StripeInput!): Viewer!
+    stripeDisconnect: Viewer!
   }
 `;

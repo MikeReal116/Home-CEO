@@ -13,5 +13,11 @@ export const useStyles = makeStyles((theme: Theme) => ({
   avatarImage: {
     height: '90px',
     width: '90px'
+  },
+  disconnect: {
+    marginBottom: theme.spacing(3)
+  },
+  connected: {
+    color: '#81c784'
   }
 }));

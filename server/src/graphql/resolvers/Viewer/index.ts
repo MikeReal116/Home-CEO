@@ -4,7 +4,9 @@ import { IResolvers } from '@graphql-tools/utils';
 
 import { Google } from '../../../lib/api/google';
 import { Viewer, Database, User } from '../../../lib/types';
-import { LogInArgs } from './types';
+import { LogInArgs, StripeConnectArgs } from './types';
+import { StripeConnect } from '../../../lib/api/stripe';
+import { authorize } from '../../../lib/utils/authorize';
 
 const cookieOptions = {
   httpOnly: true,
@@ -139,6 +141,75 @@ export const viewerResolvers: IResolvers = {
     ) => {
       res.clearCookie('viewer', cookieOptions);
       return { didRequest: true };
+    },
+    stripeConnect: async (
+      _root: undefined,
+      { input }: StripeConnectArgs,
+      { db, req }: { db: Database; req: Request }
+    ): Promise<Viewer | undefined> => {
+      try {
+        const code = input.code;
+        let viewer = await authorize(db, req);
+        if (!viewer) {
+          throw new Error('You have to login to perform this task');
+        }
+        const stripeId = await StripeConnect.connect(code);
+
+        const updateResult = await db.users.findOneAndUpdate(
+          { _id: viewer._id },
+          { $set: { walletId: stripeId } },
+          { returnDocument: 'after' }
+        );
+
+        if (!updateResult.value) {
+          throw new Error('Stripe connection encountered some error');
+        }
+
+        viewer = updateResult.value;
+
+        return {
+          _id: viewer._id,
+          avatar: viewer.avatar,
+          walletId: viewer.walletId,
+          token: viewer.token,
+          didRequest: true
+        };
+      } catch (error) {
+        throw new Error(`Could not connect with stripe : ${error}`);
+      }
+    },
+    stripeDisconnect: async (
+      _root: undefined,
+      _args: Record<string, never>,
+      { db, req }: { db: Database; req: Request }
+    ): Promise<Viewer | undefined> => {
+      try {
+        let viewer = await authorize(db, req);
+
+        if (!viewer) {
+          throw new Error('You have to login to perform this action');
+        }
+
+        const updtateResult = await db.users.findOneAndUpdate(
+          { _id: viewer._id },
+          { $set: { walletId: undefined } },
+          { returnDocument: 'after' }
+        );
+        if (!updtateResult.value) {
+          throw new Error('Stripe disconnection encountered some error');
+        }
+        viewer = updtateResult.value;
+
+        return {
+          _id: viewer._id,
+          token: viewer.token,
+          avatar: viewer.avatar,
+          walletId: viewer.walletId,
+          didRequest: true
+        };
+      } catch (error) {
+        throw new Error(`Could not disconnect with stripe : ${error}`);
+      }
     }
   },
   Viewer: {
