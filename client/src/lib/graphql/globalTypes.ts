@@ -21,6 +21,10 @@ export interface LogInInput {
   code: string;
 }
 
+export interface StripeInput {
+  code: string;
+}
+
 //==============================================================
 // END Enums and Input Objects
 //==============================================================

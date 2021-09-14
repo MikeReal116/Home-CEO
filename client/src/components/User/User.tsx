@@ -20,11 +20,12 @@ interface Param {
 
 interface Props {
   viewer: Viewer;
+  setViewer: React.Dispatch<React.SetStateAction<Viewer>>;
 }
 
 const LIMIT = 4;
 
-const User = ({ viewer }: Props) => {
+const User = ({ viewer, setViewer }: Props) => {
   const [bookingPage, setBookingPage] = useState(1);
   const [listingPage, setListingPage] = useState(1);
 
@@ -49,10 +50,21 @@ const User = ({ viewer }: Props) => {
     return errorNotification('Error getting user, try again later');
   }
 
+  const StripeError = new URLSearchParams(window.location.search).get(
+    'stripe_error'
+  );
+
   return (
     <div>
+      {StripeError &&
+        errorNotification('There was a problem connecting with Stripe')}
       <Container maxWidth='sm'>
-        <UserDetail user={userData?.user} isViewerSameUser={isViewerSameUser} />
+        <UserDetail
+          user={userData?.user}
+          isViewerSameUser={isViewerSameUser}
+          viewer={viewer}
+          setViewer={setViewer}
+        />
       </Container>
       {userData?.user?.listings && (
         <Container>

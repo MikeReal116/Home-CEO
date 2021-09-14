@@ -6,10 +6,6 @@ export const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     justifyContent: 'space-between'
   },
-  left: {
-    display: 'flex',
-    alignItems: 'center'
-  },
   right: {
     display: 'flex',
     alignItems: 'center'
