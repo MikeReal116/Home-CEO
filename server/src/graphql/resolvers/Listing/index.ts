@@ -5,6 +5,8 @@ import { ObjectId } from 'mongodb';
 import { Database, Listing, User } from '../../../lib/types';
 import { authorize } from '../../../lib/utils/authorize';
 import {
+  CreateLisitingArgs,
+  LisitingsQuery,
   ListingArgs,
   ListingFilter,
   ListingsArgs,
@@ -12,6 +14,19 @@ import {
   Paginate,
   ReturnBooking
 } from './types';
+import { Geocode } from '../../../lib/geocode';
+
+const checkListingInput = (input: CreateLisitingArgs['input']) => {
+  if (input.title.length > 50) {
+    throw new Error('Title should not be more than 200 characters');
+  }
+  if (input.description.length > 400) {
+    throw new Error('Description should not be more than 500 characters');
+  }
+  if (input.price < 0) {
+    throw new Error('Price should not be less than 0');
+  }
+};
 
 export const listingResolver: IResolvers = {
   Query: {
@@ -49,23 +64,35 @@ export const listingResolver: IResolvers = {
           total: 0
         };
 
-        let query = {};
+        const query: LisitingsQuery = {};
+
+        let city = null;
+        let admin = null;
+        let country = null;
 
         if (location) {
-          query = {
-            $or: [
-              { country: { $regex: location, $options: 'i' } },
-              { city: { $regex: location, $options: 'i' } },
-              { admin: { $regex: location, $options: 'i' } }
-            ]
-          };
+          const data = await Geocode.geocode(location);
+          city = data?.data[0].locality;
+          admin = data?.data[0].region;
+          country = data?.data[0].country;
+
+          if (city) query.city = city;
+          if (admin) query.admin = admin;
+          if (country) {
+            query.country = country;
+          } else {
+            throw new Error('No result found, try a more general search');
+          }
         }
 
         let cursor = await db.listings.find(query);
 
         listingsData.total = await cursor.count();
-        if (location && listingsData.total > 0) {
-          listingsData.search = `Results for '${location}'`;
+        if (location) {
+          const cityText = city ? city : null;
+          const adminText = admin ? admin : null;
+          const countryText = country ? country : null;
+          listingsData.search = `Results for '${cityText}, ${adminText}, ${countryText}'`;
         }
 
         if (filter === ListingFilter.PRICE_HIGH_TO_LOW) {
@@ -81,6 +108,80 @@ export const listingResolver: IResolvers = {
         return listingsData;
       } catch (error) {
         throw new Error(`Could not query for listings: ${error}`);
+      }
+    }
+  },
+  Mutation: {
+    createListing: async (
+      _root: undefined,
+      { input }: CreateLisitingArgs,
+      { db, req }: { db: Database; req: Request }
+    ): Promise<Listing | undefined> => {
+      try {
+        const viewer = await authorize(db, req);
+
+        if (!viewer) {
+          throw new Error('You have to be logged in to create a lister');
+        }
+
+        if (!viewer.walletId) {
+          throw new Error(
+            'You have to connect you account to Stripe first before you can create a listing'
+          );
+        }
+
+        checkListingInput(input);
+
+        const data = await Geocode.geocode(input.address);
+
+        if (
+          !data ||
+          !data.data[0].name ||
+          !data.data[0].region ||
+          !data.data[0].locality ||
+          !data.data[0].country
+        ) {
+          throw new Error(
+            'Could not find the specific location for this Lisitng, Check the entered location well'
+          );
+        }
+
+        const city = data.data[0].locality;
+        const address = `${data.data[0].name}, ${data.data[0].locality}, ${
+          data.data[0].region
+        } ${
+          data.data[0].postal_code ? ` , ${data.data[0].postal_code}` : null
+        }`;
+        const admin = data.data[0].region;
+        const country = data.data[0].country;
+
+        const insertResult = await db.listings.insertOne({
+          _id: new ObjectId(),
+          host: viewer._id,
+          ...input,
+          address,
+          city,
+          admin,
+          country,
+          bookings: [],
+          bookingsIndex: {}
+        });
+
+        const newLisitng = await db.listings.findOne({
+          _id: insertResult.insertedId
+        });
+
+        if (!newLisitng) {
+          throw new Error('Listing could not be created');
+        }
+
+        await db.users.updateOne(
+          { _id: viewer._id },
+          { $push: { listings: newLisitng._id } }
+        );
+        return newLisitng;
+      } catch (error) {
+        throw new Error(`Could not query to create Listing: ${error}`);
       }
     }
   },
