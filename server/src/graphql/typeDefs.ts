@@ -8,6 +8,16 @@ export const typeDefs = gql`
     code: String!
   }
 
+  input ListingInput {
+    title: String!
+    description: String!
+    image: String!
+    price: Int!
+    type: ListingType!
+    address: String!
+    numOfGuests: Int!
+  }
+
   enum ListingType {
     APARTMENT
     HOUSE
@@ -88,5 +98,6 @@ export const typeDefs = gql`
     logOut: Viewer!
     stripeConnect(input: StripeInput!): Viewer!
     stripeDisconnect: Viewer!
+    createListing(input: ListingInput!): Listing!
   }
 `;

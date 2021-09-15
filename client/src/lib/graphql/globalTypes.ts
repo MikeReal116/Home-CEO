@@ -17,6 +17,16 @@ export enum ListingType {
   HOUSE = "HOUSE",
 }
 
+export interface ListingInput {
+  title: string;
+  description: string;
+  image: string;
+  price: number;
+  type: ListingType;
+  address: string;
+  numOfGuests: number;
+}
+
 export interface LogInInput {
   code: string;
 }

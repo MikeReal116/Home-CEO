@@ -1,4 +1,4 @@
-import { Booking, Listing } from '../../../lib/types';
+import { Booking, Listing, ListingType } from '../../../lib/types';
 
 export interface ListingArgs {
   id: string;
@@ -36,4 +36,16 @@ export interface LisitingsQuery {
   city?: string | null;
   admin?: string | null;
   country?: string | null;
+}
+
+export interface CreateLisitingArgs {
+  input: {
+    title: string;
+    description: string;
+    image: string;
+    price: number;
+    type: ListingType;
+    address: string;
+    numOfGuests: number;
+  };
 }

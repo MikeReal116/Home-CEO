@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useMutation } from '@apollo/client';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { CircularProgress, Container } from '@material-ui/core';
 
 import Listings from './Listings/Listings';
@@ -61,7 +61,15 @@ function App() {
         <Header viewer={viewer} setViewer={setViewer} />
         <Switch>
           <Route exact path='/' component={Home} />
-          <Route exact path='/host' component={Host} />
+          <Route exact path='/host'>
+            {viewer.id ? (
+              <Host />
+            ) : (
+              () => {
+                <Redirect to='/login' />;
+              }
+            )}
+          </Route>
           <Route exact path='/listing/:id' component={Listing} />
           <Route exact path='/listings/:location?' component={Listings} />
           <Route
