@@ -15,6 +15,7 @@ import {
   ReturnBooking
 } from './types';
 import { Geocode } from '../../../lib/geocode';
+import { Cloudinary } from '../../../lib/api/cloudinary';
 
 const checkListingInput = (input: CreateLisitingArgs['input']) => {
   if (input.title.length > 50) {
@@ -155,10 +156,13 @@ export const listingResolver: IResolvers = {
         const admin = data.data[0].region;
         const country = data.data[0].country;
 
+        const image = await Cloudinary.upload(input.image);
+
         const insertResult = await db.listings.insertOne({
           _id: new ObjectId(),
           host: viewer._id,
           ...input,
+          image,
           address,
           city,
           admin,
