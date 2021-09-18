@@ -11,6 +11,7 @@ import {
 import UserDetail from '../UserDetail/UserDetail';
 import { Viewer } from '../../lib/types';
 import { errorNotification } from '../../lib/notifications/error';
+import { successNotification } from '../../lib/notifications/success';
 import UserListing from '../UserListing/UserListing';
 import UserBooking from '../UserBooking/UserBooking';
 
@@ -54,10 +55,16 @@ const User = ({ viewer, setViewer }: Props) => {
     'stripe_error'
   );
 
+  const bookingSuccess = new URLSearchParams(window.location.search).get(
+    'booking_success'
+  );
+
   return (
     <div>
       {StripeError &&
         errorNotification('There was a problem connecting with Stripe')}
+      {bookingSuccess &&
+        successNotification('Congratulations. Booking was successfully made')}
       <Container maxWidth='sm'>
         <UserDetail
           user={userData?.user}

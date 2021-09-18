@@ -21,6 +21,7 @@
     "googleapis": "^84.0.0",
     "graphql": "^15.5.1",
     "lodash.merge": "^4.6.2",
+    "moment": "^2.29.1",
     "mongodb": "^4.1.0",
     "stripe": "^8.174.0"
   },

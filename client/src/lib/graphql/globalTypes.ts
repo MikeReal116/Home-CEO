@@ -8,13 +8,20 @@
 //==============================================================
 
 export enum ListingFilter {
-  PRICE_HIGH_TO_LOW = "PRICE_HIGH_TO_LOW",
-  PRICE_LOW_TO_HIGH = "PRICE_LOW_TO_HIGH",
+  PRICE_HIGH_TO_LOW = 'PRICE_HIGH_TO_LOW',
+  PRICE_LOW_TO_HIGH = 'PRICE_LOW_TO_HIGH'
 }
 
 export enum ListingType {
-  APARTMENT = "APARTMENT",
-  HOUSE = "HOUSE",
+  APARTMENT = 'APARTMENT',
+  HOUSE = 'HOUSE'
+}
+
+export interface BookingInput {
+  listing: string;
+  checkIn: string;
+  checkOut: string;
+  source: string;
 }
 
 export interface ListingInput {

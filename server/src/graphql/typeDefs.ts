@@ -18,6 +18,13 @@ export const typeDefs = gql`
     numOfGuests: Int!
   }
 
+  input BookingInput {
+    listing: ID!
+    checkIn: String!
+    checkOut: String!
+    source: String!
+  }
+
   enum ListingType {
     APARTMENT
     HOUSE
@@ -99,5 +106,6 @@ export const typeDefs = gql`
     stripeConnect(input: StripeInput!): Viewer!
     stripeDisconnect: Viewer!
     createListing(input: ListingInput!): Listing!
+    createBooking(input: BookingInput!): ID!
   }
 `;

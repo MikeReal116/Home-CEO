@@ -11,5 +11,26 @@ export const StripeConnect = {
       code
     });
     return response.stripe_user_id;
+  },
+  charge: async (amount: number, stripeAccount: string, source: string) => {
+    try {
+      const charge = await stripe.charges.create(
+        {
+          amount,
+          currency: 'eur',
+          application_fee_amount: Math.round(0.05 * amount),
+          source
+        },
+        {
+          stripeAccount: `${stripeAccount}`
+        }
+      );
+
+      if (charge.status !== 'succeeded') {
+        throw new Error('Payment was not successful');
+      }
+    } catch (error) {
+      throw new Error(`Could not connect to Stripe to make charge: ${error}`);
+    }
   }
 };
