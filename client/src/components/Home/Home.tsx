@@ -43,7 +43,8 @@ const Home = () => {
       filter: ListingFilter.PRICE_HIGH_TO_LOW,
       limit: LIMIT,
       page: PAGE
-    }
+    },
+    fetchPolicy: 'cache-and-network'
   });
 
   const handleChange = (
@@ -98,27 +99,32 @@ const Home = () => {
       className={classes.root}
       style={{ backgroundImage: `url(${map})`, backgroundRepeat: 'repeat-x' }}
     >
-      <Typography variant='h5' color='primary' paragraph>
-        <strong>Find places in the world</strong>
-      </Typography>
-      <Paper className={classes.search} elevation={3}>
-        <InputBase
-          className={classes.input}
-          placeholder='Search Cities'
-          inputProps={{ 'aria-label': 'search cities' }}
-          onChange={handleChange}
-        />
-        <IconButton
-          type='submit'
-          className={classes.iconButton}
-          aria-label='search'
-          disabled={disabled}
-          onClick={handleSearchClick}
-        >
-          <SearchIcon />
-        </IconButton>
-      </Paper>
-
+      <Grid container>
+        <Grid item xs={12}>
+          <Typography variant='h5' color='primary' paragraph>
+            <strong>Find places in the world</strong>
+          </Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <Paper className={classes.search} elevation={3}>
+            <InputBase
+              className={classes.input}
+              placeholder='Search Cities'
+              inputProps={{ 'aria-label': 'search cities' }}
+              onChange={handleChange}
+            />
+            <IconButton
+              type='submit'
+              className={classes.iconButton}
+              aria-label='search'
+              disabled={disabled}
+              onClick={handleSearchClick}
+            >
+              <SearchIcon />
+            </IconButton>
+          </Paper>
+        </Grid>
+      </Grid>
       <HomeHero />
       <Grid container spacing={3} className={classes.infoSec}>
         <Grid item xs={12}>
@@ -133,7 +139,12 @@ const Home = () => {
           </Typography>
         </Grid>
         <Grid item xs={12}>
-          <Button color='primary' variant='contained' className={classes.btn}>
+          <Button
+            color='primary'
+            variant='contained'
+            className={classes.btn}
+            onClick={() => history.push(`/listings/United%20States`)}
+          >
             Popular Listings from the US
           </Button>
         </Grid>
@@ -146,7 +157,7 @@ const Home = () => {
           </Typography>
         </Grid>
         <Grid item xs={12} md={6}>
-          <Link to={'/listings/mexico'}>
+          <Link to={'/listings/Cancun'}>
             <Card className={classes.card}>
               <CardMedia
                 className={classes.media}
