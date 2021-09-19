@@ -37,7 +37,8 @@ const User = ({ viewer, setViewer }: Props) => {
     loading,
     error
   } = useQuery<UserData, UserVariables>(GET_USER, {
-    variables: { id, limit: LIMIT, bookingPage, listingPage }
+    variables: { id, limit: LIMIT, bookingPage, listingPage },
+    fetchPolicy: 'cache-and-network'
   });
 
   const isViewerSameUser = Boolean(

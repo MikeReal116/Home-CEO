@@ -78,7 +78,7 @@ export const listingResolver: IResolvers = {
           country = data?.data[0].country;
 
           if (city) query.city = city;
-          if (admin) query.admin = admin;
+          //if (admin) query.admin = admin;
           if (country) {
             query.country = country;
           } else {
@@ -90,10 +90,12 @@ export const listingResolver: IResolvers = {
 
         listingsData.total = await cursor.count();
         if (location) {
-          const cityText = city ? city : null;
-          const adminText = admin ? admin : null;
-          const countryText = country ? country : null;
-          listingsData.search = `Results for '${cityText}, ${adminText}, ${countryText}'`;
+          const cityText = city ? city : '';
+          const adminText = admin ? admin : '';
+          const countryText = country ? country : '';
+          listingsData.search = `Results for '${
+            cityText ? cityText + `,` : ''
+          } ${adminText ? adminText + `,` : ''} ${countryText}'`;
         }
 
         if (filter === ListingFilter.PRICE_HIGH_TO_LOW) {

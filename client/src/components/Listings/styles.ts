@@ -9,6 +9,10 @@ export const useStyles = makeStyles((theme: Theme) => ({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: theme.spacing(3),
-    marginTop: theme.spacing(3)
+    marginTop: theme.spacing(3),
+
+    [theme.breakpoints.down('xs')]: {
+      flexDirection: 'column'
+    }
   }
 }));

@@ -8,7 +8,6 @@ export const useStyles = makeStyles((theme: Theme) => ({
     padding: '2px 4px',
     display: 'flex',
     alignItems: 'center',
-    width: 500,
     marginBottom: theme.spacing(5)
   },
   input: {
