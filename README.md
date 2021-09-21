@@ -6,4 +6,4 @@
 
 # Project Description
 
-Home sharing app built with React, Node, MongoDB, GraphQL, Apollo and TypeScript
+Home sharing app built with React, Node, Express, MongoDB, GraphQL, Apollo and TypeScript
